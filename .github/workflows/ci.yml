@@ -2,39 +2,36 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v4
+    - name: Checkout del repositorio
+      uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
 
-      - name: Instalar dependencias
-        run: |
-          pip install -r requirements.txt
-          pip install pytest setuptools wheel
+    - name: Instalar dependencias
+      run: |
+        pip install -r requirements.txt
+        pip install pytest setuptools wheel
+        export PYTHONPATH="${{ github.workspace }}"
 
-      - name: Ejecutar pruebas
-        run: pytest
+    - name: Ejecutar pruebas
+      run: pytest
 
-      - name: Construir package
-        run: |
-          python setup.py sdist bdist_wheel
+    - name: Construir package
+      run: |
+        python setup.py sdist bdist_wheel
 
-      - name: Subir artefacto generado
-        uses: actions/upload-artifact@v4
-        with:
-          name: paquete-python
-          path: dist/
+    - name: Subir artefacto generado
+      uses: actions/upload-artifact@v4
+      with:
+        name: paquete-python
+        path: dist/
