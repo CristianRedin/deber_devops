@@ -1,38 +1,30 @@
-name: CI/CD Pipeline
+name: Python tests
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout del repositorio
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Configurar Python
-      uses: actions/setup-python@v5
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
-    - name: Instalar dependencias
+    - name: Install dependencies
       run: |
-        pip install -r deber_devops/requirements.txt
-        pip install pytest setuptools wheel
-        export PYTHONPATH="${{ github.workspace }}/deber_devops"
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Ejecutar pruebas
-      run: pytest deber_devops/tests
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
-    - name: Construir package
-      run: |
-        cd deber_devops
-        python setup.py sdist bdist_wheel
-
-    - name: Subir artefacto generado
-      uses: actions/upload-artifact@v4
-      with:
-        name: paquete-python
-        path: deber_devops/dist/
+    - name: Run tests
+      run: pytest tests/
