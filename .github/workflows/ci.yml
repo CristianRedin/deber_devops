@@ -21,17 +21,19 @@ jobs:
       run: |
         pip install -r requirements.txt
         pip install pytest setuptools wheel
-        export PYTHONPATH="${{ github.workspace }}"
+        # IMPORTANTE: apuntar a la carpeta correcta donde esta src
+        export PYTHONPATH="${{ github.workspace }}/deber_devops"
 
     - name: Ejecutar pruebas
-      run: pytest
+      run: pytest deber_devops/tests
 
     - name: Construir package
       run: |
+        cd deber_devops
         python setup.py sdist bdist_wheel
 
     - name: Subir artefacto generado
       uses: actions/upload-artifact@v4
       with:
         name: paquete-python
-        path: dist/
+        path: deber_devops/dist/
