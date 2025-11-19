@@ -19,19 +19,20 @@ jobs:
 
     - name: Instalar dependencias
       run: |
-        pip install -r requirements.txt
+        pip install -r deber_devops/requirements.txt
         pip install pytest setuptools wheel
-        # Agregar el proyecto al PYTHONPATH
-        export PYTHONPATH="${{ github.workspace }}"
+        export PYTHONPATH="${{ github.workspace }}/deber_devops"
 
     - name: Ejecutar pruebas
-      run: pytest tests/
+      run: pytest deber_devops/tests
 
     - name: Construir package
-      run: python setup.py sdist bdist_wheel
+      run: |
+        cd deber_devops
+        python setup.py sdist bdist_wheel
 
     - name: Subir artefacto generado
       uses: actions/upload-artifact@v4
       with:
         name: paquete-python
-        path: dist/
+        path: deber_devops/dist/
