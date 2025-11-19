@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Instalar dependencias
+      run: |
+        pip install -r requirements.txt
+        pip install pytest setuptools wheel
+
+    - name: Ejecutar pruebas
+      run: pytest
+
+    - name: Construir package
+      run: |
+        python setup.py sdist bdist_wheel
+
+    - name: Subir artefacto generado
+      uses: actions/upload-artifact@v3
+      with:
+        name: paquete-python
+        path: dist/
